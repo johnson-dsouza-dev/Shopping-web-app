@@ -4,6 +4,9 @@ import User from "../models/userModel.js";
 // Importing the asyncHandler middleware to handle any asynchronous errors in this function
 import asyncHandler from "../middleware/asyncHandler.js";
 
+//Inmporting bycrpt for gettin the salt
+import bcrypt from "bcryptjs/dist/bcrypt.js";
+
 // Defining the createUser function to handle the process of creating a new user
 // Wrapping the function with asyncHandler to manage asynchronous errors automatically
 const createUser = asyncHandler(async (req, res) => {
@@ -23,8 +26,16 @@ const createUser = asyncHandler(async (req, res) => {
   // If the user already exists, return a 400 status with an error message and stop further execution
   if (userExists) return res.status(400).send("User already exists ");
 
+  // generating salt and hashed password to store password in the dab
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
   // Create a new user instance with the provided 'username', 'email', and 'password'
-  const newUser = new User({ username, email, password });
+  const newUser = new User({
+    username: username,
+    email: email,
+    password: hashedPassword,
+  });
 
   try {
     // Attempt to save the new user to the database
