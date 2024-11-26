@@ -18,7 +18,7 @@ const createUser = asyncHandler(async (req, res) => {
 
   // Ensure all required fields are provided
   if (!username || !email || !password) {
-    console.log("Provide all the data ");
+    console.log("Provide all the data");
     throw new Error("Please fill all the inputs");
   }
 
@@ -62,20 +62,26 @@ const createUser = asyncHandler(async (req, res) => {
   }
 });
 
+// Function to log in an existing user
 const loginUser = asyncHandler(async (req, res) => {
+  // Extracting email and password from the request body
   const { email, password } = req.body;
 
+  // Check if the user exists in the database
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
-    const isPaswordValid = await bcrypt.compare(
+    // Validate the provided password against the stored hashed password
+    const isPasswordValid = await bcrypt.compare(
       password,
       existingUser.password
     );
 
-    if (isPaswordValid) {
+    if (isPasswordValid) {
+      // Generate a JWT token and set it as a cookie in the response
       createToken(res, existingUser._id);
 
+      // Return the user details with a 201 (Created) status
       res.status(201).json({
         _id: existingUser._id,
         username: existingUser.username,
@@ -85,16 +91,22 @@ const loginUser = asyncHandler(async (req, res) => {
       return;
     }
   }
+
+  // If login fails, return a 401 (Unauthorized) error
+  res.status(401).json({ message: "Invalid email or password" });
 });
 
+// Function to log out the current user
 const logoutCurrentUser = asyncHandler(async (req, res) => {
+  // Clear the JWT cookie by setting it to an empty string and expiring it immediately
   res.cookie("jwt", "", {
-    httpOnly: true,
-    expires: new Date(0),
+    httpOnly: true, // Ensures the cookie is only accessible by the server
+    expires: new Date(0), // Set the cookie to expire immediately
   });
 
-  res.status(200).json({ message: "Logged out user sucessfully" });
+  // Send a 200 (OK) status with a success message
+  res.status(200).json({ message: "Logged out user successfully" });
 });
 
-// Export the createUser function for use in routes or other parts of the application
+// Export the functions for use in routes or other parts of the application
 export { createUser, loginUser, logoutCurrentUser };

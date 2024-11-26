@@ -1,16 +1,30 @@
 // Importing the express library to create a router for handling HTTP requests
 import express from "express";
-import { createUser, loginUser,logoutCurrentUser } from "../controllers/userController.js";
 
-// Initializing a new router object to define routes for user-related actions
+// Importing controller functions for user actions
+import {
+  createUser,
+  loginUser,
+  logoutCurrentUser,
+} from "../controllers/userController.js";
+
+// Initializing a new router object to define user-related routes
 const router = express.Router();
 
-// Setting up a route for POST requests to "/" (e.g., "/api/users/")
-// When a POST request is made to this endpoint, the createUser function will be called to handle it
+// Route to handle user registration
+// POST request to "/" (e.g., "/api/users/")
+// Calls the createUser function to create a new user
 router.route("/").post(createUser);
 
+// Route to handle user login
+// POST request to "/auth" (e.g., "/api/users/auth")
+// Calls the loginUser function to authenticate the user and generate a token
 router.post("/auth", loginUser);
-router.post("/logout",logoutCurrentUser)
 
-// Exporting the router so it can be used in other parts of the application
+// Route to handle user logout
+// POST request to "/logout" (e.g., "/api/users/logout")
+// Calls the logoutCurrentUser function to clear the session cookie
+router.post("/logout", logoutCurrentUser);
+
+// Exporting the router to be used in the application, e.g., in the main server file
 export default router;
