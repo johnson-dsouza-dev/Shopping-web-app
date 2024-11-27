@@ -6,7 +6,10 @@ import {
   createUser,
   loginUser,
   logoutCurrentUser,
+  getAllUsers,
 } from "../controllers/userController.js";
+
+import { authenticate, authorizeAdmin } from "../middleware/authMiddleware.js";
 
 // Initializing a new router object to define user-related routes
 const router = express.Router();
@@ -14,7 +17,10 @@ const router = express.Router();
 // Route to handle user registration
 // POST request to "/" (e.g., "/api/users/")
 // Calls the createUser function to create a new user
-router.route("/").post(createUser);
+router
+  .route("/")
+  .post(createUser)
+  .get(authenticate, authorizeAdmin, getAllUsers);
 
 // Route to handle user login
 // POST request to "/auth" (e.g., "/api/users/auth")
