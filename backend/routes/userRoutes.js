@@ -7,6 +7,8 @@ import {
   loginUser,
   logoutCurrentUser,
   getAllUsers,
+  getCurrentUserProfile,
+  updateCurrentUserProfile,
 } from "../controllers/userController.js";
 
 import { authenticate, authorizeAdmin } from "../middleware/authMiddleware.js";
@@ -31,6 +33,6 @@ router.post("/auth", loginUser);
 // POST request to "/logout" (e.g., "/api/users/logout")
 // Calls the logoutCurrentUser function to clear the session cookie
 router.post("/logout", logoutCurrentUser);
-
+router.route('/profile').get(authenticate,getCurrentUserProfile).put(authenticate,updateCurrentUserProfile)
 // Exporting the router to be used in the application, e.g., in the main server file
 export default router;
