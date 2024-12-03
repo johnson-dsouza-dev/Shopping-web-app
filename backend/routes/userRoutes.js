@@ -9,6 +9,7 @@ import {
   getAllUsers,
   getCurrentUserProfile,
   updateCurrentUserProfile,
+  deleteUserById
 } from "../controllers/userController.js";
 
 import { authenticate, authorizeAdmin } from "../middleware/authMiddleware.js";
@@ -35,4 +36,6 @@ router.post("/auth", loginUser);
 router.post("/logout", logoutCurrentUser);
 router.route('/profile').get(authenticate,getCurrentUserProfile).put(authenticate,updateCurrentUserProfile)
 // Exporting the router to be used in the application, e.g., in the main server file
+
+router.route('/:id').delete(authenticate,authorizeAdmin,deleteUserById)
 export default router;

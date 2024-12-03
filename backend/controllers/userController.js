@@ -151,6 +151,22 @@ const updateCurrentUserProfile = asyncHandler(async (req, res) => {
     throw new Error("User not Found ");
   }
 });
+
+const deleteUserById = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    if (user.isAdmin) {
+      res.status(400);
+      throw new Error("Canot delete admin user  ");
+    }
+    await User.deleteOne({ _id: user._id });
+    res.json({ message: "User removed " });
+  } else {
+    res.status(404);
+    throw new Error("User not found  ");
+  }
+});
 // Export the functions for use in routes or other parts of the application
 export {
   createUser,
@@ -159,4 +175,5 @@ export {
   getAllUsers,
   getCurrentUserProfile,
   updateCurrentUserProfile,
+  deleteUserById,
 };
